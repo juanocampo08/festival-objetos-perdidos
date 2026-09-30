@@ -2,4 +2,12 @@ node_modules
 .env
 /generated/prisma
 /dist
+
+.agents/
+.claude/
+.cursor/
+.devin/
+.windsurf/
+skills-lock.json
+
 npm-debug.log*
