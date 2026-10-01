@@ -63,6 +63,12 @@ export class PrismaObjetosPerdidosRepository
             return voluntario !== null;
         }
 
-        
+        async obtenerDocumentoAsistente(id: number): Promise<string | null> {
+            const asistente = await prisma.asistentes.findUnique({
+                where: { id },
+                select: { documento: true },
+            });
+            return asistente?.documento ?? null;
+            }
         
 }
