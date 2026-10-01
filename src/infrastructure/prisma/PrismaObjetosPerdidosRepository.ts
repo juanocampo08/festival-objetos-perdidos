@@ -39,7 +39,12 @@ export class PrismaObjetosPerdidosRepository
                 };
             }
             
-
-            
+        async existeZone(id:number): Promise<boolean> {
+            const zona = await prisma.zonas.findUnique({
+                where: {id},
+                select: {id:true},
+            });
+            return zona !== null;
+        }
         
 }
