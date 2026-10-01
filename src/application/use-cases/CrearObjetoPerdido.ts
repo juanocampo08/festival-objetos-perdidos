@@ -7,15 +7,7 @@ import type {
   IObjetosPerdidosRepository,
 } from '../../domain/repositories/IObjetosPerdidosRepository.ts';
 
-export class ApplicationError extends Error {
-  readonly statusCode: number;
-
-  constructor(statusCode: number, message: string) {
-    super(message);
-    this.name = 'ApplicationError';
-    this.statusCode = statusCode;
-  }
-}
+import { ApplicationError } from '../errors/ApplicationError.ts';
 
 export class CrearObjetoPerdido {
   private readonly repository: IObjetosPerdidosRepository;

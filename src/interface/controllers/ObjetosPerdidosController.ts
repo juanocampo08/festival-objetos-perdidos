@@ -9,18 +9,21 @@ import type {
   DatosActualizarObjetoPerdido,
   FiltrosObjetosPerdidos,
 } from '../../domain/repositories/IObjetosPerdidosRepository.ts';
+import { EliminarObjetoPerdido } from '../../application/use-cases/EliminarObjetoPerdido.ts';
 
 export class ObjetosPerdidosController {
     private readonly listarObjetosPerdidos: ListarObjetosPerdidos;
     private readonly obtenerObjetoPerdido: ObtenerObjetoPerdido;
     private readonly crearObjetoPerdido: CrearObjetoPerdido;
     private readonly editarObjetoPerdido: EditarObjetoPerdido;
+    private readonly eliminarObjetoPerdido: EliminarObjetoPerdido;
 
   constructor(
     listarObjetosPerdidos: ListarObjetosPerdidos,
     obtenerObjetoPerdido: ObtenerObjetoPerdido,
     crearObjetoPerdido: CrearObjetoPerdido,
     editarObjetoPerdido: EditarObjetoPerdido,
+    eliminarObjetoPerdido: EliminarObjetoPerdido,
 
 
     ) {
@@ -28,6 +31,7 @@ export class ObjetosPerdidosController {
     this.obtenerObjetoPerdido = obtenerObjetoPerdido;
     this.crearObjetoPerdido = crearObjetoPerdido;
     this.editarObjetoPerdido = editarObjetoPerdido;
+    this.eliminarObjetoPerdido = eliminarObjetoPerdido;
 
   }
 
@@ -98,6 +102,29 @@ export class ObjetosPerdidosController {
       const objeto = await this.editarObjetoPerdido.execute(id, datos);
 
       response.status(200).json({ data: objeto });
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        response.status(error.statusCode).json({
+          error: error.message,
+        });
+        return;
+      }
+
+      response.status(500).json({
+        error: 'Error interno del servidor',
+      });
+    }
+  }
+
+  async eliminar(request: Request, response: Response): Promise<void> {
+    try {
+      const id = Number(request.params.id);
+
+      const objeto = await this.eliminarObjetoPerdido.execute(id);
+
+      response.status(200).json({
+        data: objeto,
+      });
     } catch (error) {
       if (error instanceof ApplicationError) {
         response.status(error.statusCode).json({
