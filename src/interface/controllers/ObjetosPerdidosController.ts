@@ -1,28 +1,33 @@
 import type { Request, Response } from 'express';
-import type { FiltrosObjetosPerdidos } from '../../domain/repositories/IObjetosPerdidosRepository.ts';
 import { ListarObjetosPerdidos } from '../../application/use-cases/ListarObjetosPerdidos.ts';
 import { ObtenerObjetoPerdido } from '../../application/use-cases/ObtenerObjetoPerdido.ts';
-import {
-  ApplicationError,
-  CrearObjetoPerdido,
-} from '../../application/use-cases/CrearObjetoPerdido.ts';
+import { CrearObjetoPerdido } from '../../application/use-cases/CrearObjetoPerdido.ts';
+import { EditarObjetoPerdido } from '../../application/use-cases/EditarObjetoPerdido.ts';
+import { ApplicationError } from '../../application/errors/ApplicationError.ts';
 import type { DatosCrearObjetoPerdido } from '../../domain/repositories/IObjetosPerdidosRepository.ts';
+import type {
+  DatosActualizarObjetoPerdido,
+  FiltrosObjetosPerdidos,
+} from '../../domain/repositories/IObjetosPerdidosRepository.ts';
 
 export class ObjetosPerdidosController {
     private readonly listarObjetosPerdidos: ListarObjetosPerdidos;
     private readonly obtenerObjetoPerdido: ObtenerObjetoPerdido;
     private readonly crearObjetoPerdido: CrearObjetoPerdido;
+    private readonly editarObjetoPerdido: EditarObjetoPerdido;
 
   constructor(
     listarObjetosPerdidos: ListarObjetosPerdidos,
     obtenerObjetoPerdido: ObtenerObjetoPerdido,
     crearObjetoPerdido: CrearObjetoPerdido,
+    editarObjetoPerdido: EditarObjetoPerdido,
+
 
     ) {
     this.listarObjetosPerdidos = listarObjetosPerdidos;
     this.obtenerObjetoPerdido = obtenerObjetoPerdido;
     this.crearObjetoPerdido = crearObjetoPerdido;
-
+    this.editarObjetoPerdido = editarObjetoPerdido;
 
   }
 
@@ -84,4 +89,28 @@ export class ObjetosPerdidosController {
       });
     }
   }
+
+  async editar(request: Request, response: Response): Promise<void> {
+    try {
+      const id = Number(request.params.id);
+      const datos = request.body as DatosActualizarObjetoPerdido;
+
+      const objeto = await this.editarObjetoPerdido.execute(id, datos);
+
+      response.status(200).json({ data: objeto });
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        response.status(error.statusCode).json({
+          error: error.message,
+        });
+        return;
+      }
+
+      response.status(500).json({
+        error: 'Error interno del servidor',
+      });
+    }
+  }
 }
+
+

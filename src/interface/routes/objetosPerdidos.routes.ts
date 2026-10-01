@@ -4,13 +4,15 @@ import { ListarObjetosPerdidos } from '../../application/use-cases/ListarObjetos
 import { ObtenerObjetoPerdido } from '../../application/use-cases/ObtenerObjetoPerdido.ts';
 import { ObjetosPerdidosController } from '../controllers/ObjetosPerdidosController.ts';
 import { CrearObjetoPerdido } from '../../application/use-cases/CrearObjetoPerdido.ts';
+import { EditarObjetoPerdido } from '../../application/use-cases/EditarObjetoPerdido.ts';
 
 const repository = new PrismaObjetosPerdidosRepository();
 const listarObjetosPerdidos = new ListarObjetosPerdidos(repository);
 const obtenerObjetoPerdido = new ObtenerObjetoPerdido(repository);
 const crearObjetoPerdido = new CrearObjetoPerdido(repository);
+const editarObjetoPerdido = new EditarObjetoPerdido(repository);
 
-const controller = new ObjetosPerdidosController(listarObjetosPerdidos, obtenerObjetoPerdido,crearObjetoPerdido,);
+const controller = new ObjetosPerdidosController(listarObjetosPerdidos, obtenerObjetoPerdido,crearObjetoPerdido,  editarObjetoPerdido,);
 export const objetosPerdidosRoutes = Router();
 
 
@@ -27,4 +29,8 @@ objetosPerdidosRoutes.get(
 objetosPerdidosRoutes.post(
   '/objetos-perdidos',
   controller.crear.bind(controller),
+);
+objetosPerdidosRoutes.patch(
+  '/objetos-perdidos/:id',
+  controller.editar.bind(controller),
 );
