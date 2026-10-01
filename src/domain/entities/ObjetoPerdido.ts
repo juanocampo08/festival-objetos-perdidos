@@ -18,5 +18,5 @@ export interface ObjetoPerdido{
     fecha_entrega: Date | null;
     state: EstadoRegistro;
     created_at: Date;
-    update_at: Date;
+    updated_at: Date;
 }
