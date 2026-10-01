@@ -110,7 +110,36 @@ export class PrismaObjetosPerdidosRepository
                 total,
             };
             } 
-            
+
+        async crear(datos: DatosCrearObjetoPerdido,): Promise<ObjetoPerdido> {
+            const row = await prisma.objetos_perdidos.create({
+                data: {
+                descripcion: datos.descripcion,
+                categoria: datos.categoria,
+                zona_id: datos.zona_id,
+                dia_id: datos.dia_id,
+                voluntario_id: datos.voluntario_id,
+                estado: 'EN_BODEGA',
+                state: 'ACTIVE',
+                },
+            });
+
+            return {
+                id: row.id,
+                descripcion: row.descripcion,
+                categoria: row.categoria as ObjetoPerdido['categoria'],
+                zona_id: row.zona_id,
+                dia_id: row.dia_id,
+                voluntario_id: row.voluntario_id,
+                estado: row.estado as ObjetoPerdido['estado'],
+                reclamado_por_asistente_id: row.reclamado_por_asistente_id,
+                fecha_entrega: row.fecha_entrega,
+                state: row.state as ObjetoPerdido['state'],
+                created_at: row.created_at,
+                updated_at: row.updated_at,
+            };
+            }
+                        
             
         
 }
