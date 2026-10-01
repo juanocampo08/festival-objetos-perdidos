@@ -46,6 +46,7 @@ export class PrismaObjetosPerdidosRepository
             });
             return zona !== null;
         }
+
         async existeDia(id:number): Promise<boolean> {
             const dia = await prisma.dias.findUnique({
                 where: {id},
@@ -53,5 +54,15 @@ export class PrismaObjetosPerdidosRepository
             });
             return dia !== null;
         }
+
+        async existeVoluntario(id: number): Promise<boolean> {
+            const voluntario = await prisma.voluntarios.findUnique({
+                where: {id},
+                select: {id:true}
+            });
+            return voluntario !== null;
+        }
+
+        
         
 }
