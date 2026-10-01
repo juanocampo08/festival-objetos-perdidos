@@ -70,5 +70,47 @@ export class PrismaObjetosPerdidosRepository
             });
             return asistente?.documento ?? null;
             }
+
+        async listar(filtros: FiltrosObjetosPerdidos,): Promise<{
+            data: ObjetoPerdido[];
+            total: number;
+            }> {
+            const where = { state: 'ACTIVE', 
+                ...(filtros.categoria? { categoria: filtros.categoria }: {}),
+                ...(filtros.estado? { estado: filtros.estado }: {}),
+                ...(filtros.dia_id !== undefined? { dia_id: filtros.dia_id }: {}),
+                ...(filtros.zona_id !== undefined? { zona_id: filtros.zona_id }: {}),
+            };
+
+            const [rows, total] = await Promise.all([
+                prisma.objetos_perdidos.findMany({
+                where,
+                orderBy: { id: 'asc' },
+                skip: (filtros.page - 1) * filtros.limit,
+                take: filtros.limit,
+                }),
+                prisma.objetos_perdidos.count({ where }),
+            ]);
+
+            return {
+                data: rows.map((row) => ({
+                id: row.id,
+                descripcion: row.descripcion,
+                categoria: row.categoria as ObjetoPerdido['categoria'],
+                zona_id: row.zona_id,
+                dia_id: row.dia_id,
+                voluntario_id: row.voluntario_id,
+                estado: row.estado as ObjetoPerdido['estado'],
+                reclamado_por_asistente_id: row.reclamado_por_asistente_id,
+                fecha_entrega: row.fecha_entrega,
+                state: row.state as ObjetoPerdido['state'],
+                created_at: row.created_at,
+                updated_at: row.updated_at,
+                })),
+                total,
+            };
+            } 
+            
+            
         
 }
