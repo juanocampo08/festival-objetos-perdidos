@@ -10,6 +10,8 @@ import type {
   FiltrosObjetosPerdidos,
 } from '../../domain/repositories/IObjetosPerdidosRepository.ts';
 import { EliminarObjetoPerdido } from '../../application/use-cases/EliminarObjetoPerdido.ts';
+import { ReclamarObjetoPerdido } from '../../application/use-cases/ReclamarObjetoPerdido.ts';
+import type { DatosReclamarObjeto } from '../../application/use-cases/ReclamarObjetoPerdido.ts';
 
 export class ObjetosPerdidosController {
     private readonly listarObjetosPerdidos: ListarObjetosPerdidos;
@@ -17,6 +19,7 @@ export class ObjetosPerdidosController {
     private readonly crearObjetoPerdido: CrearObjetoPerdido;
     private readonly editarObjetoPerdido: EditarObjetoPerdido;
     private readonly eliminarObjetoPerdido: EliminarObjetoPerdido;
+    private readonly reclamarObjetoPerdido: ReclamarObjetoPerdido;
 
   constructor(
     listarObjetosPerdidos: ListarObjetosPerdidos,
@@ -24,6 +27,7 @@ export class ObjetosPerdidosController {
     crearObjetoPerdido: CrearObjetoPerdido,
     editarObjetoPerdido: EditarObjetoPerdido,
     eliminarObjetoPerdido: EliminarObjetoPerdido,
+    reclamarObjetoPerdido: ReclamarObjetoPerdido,
 
 
     ) {
@@ -32,6 +36,7 @@ export class ObjetosPerdidosController {
     this.crearObjetoPerdido = crearObjetoPerdido;
     this.editarObjetoPerdido = editarObjetoPerdido;
     this.eliminarObjetoPerdido = eliminarObjetoPerdido;
+    this.reclamarObjetoPerdido = reclamarObjetoPerdido;
 
   }
 
@@ -125,6 +130,28 @@ export class ObjetosPerdidosController {
       response.status(200).json({
         data: objeto,
       });
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        response.status(error.statusCode).json({
+          error: error.message,
+        });
+        return;
+      }
+
+      response.status(500).json({
+        error: 'Error interno del servidor',
+      });
+    }
+  }
+
+  async reclamar(request: Request, response: Response): Promise<void> {
+    try {
+      const id = Number(request.params.id);
+      const datos = request.body as DatosReclamarObjeto;
+
+      const objeto = await this.reclamarObjetoPerdido.execute(id, datos);
+
+      response.status(200).json({ data: objeto });
     } catch (error) {
       if (error instanceof ApplicationError) {
         response.status(error.statusCode).json({
