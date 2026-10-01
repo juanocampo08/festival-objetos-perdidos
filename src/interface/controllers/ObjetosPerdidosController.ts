@@ -2,17 +2,27 @@ import type { Request, Response } from 'express';
 import type { FiltrosObjetosPerdidos } from '../../domain/repositories/IObjetosPerdidosRepository.ts';
 import { ListarObjetosPerdidos } from '../../application/use-cases/ListarObjetosPerdidos.ts';
 import { ObtenerObjetoPerdido } from '../../application/use-cases/ObtenerObjetoPerdido.ts';
+import {
+  ApplicationError,
+  CrearObjetoPerdido,
+} from '../../application/use-cases/CrearObjetoPerdido.ts';
+import type { DatosCrearObjetoPerdido } from '../../domain/repositories/IObjetosPerdidosRepository.ts';
 
 export class ObjetosPerdidosController {
     private readonly listarObjetosPerdidos: ListarObjetosPerdidos;
     private readonly obtenerObjetoPerdido: ObtenerObjetoPerdido;
+    private readonly crearObjetoPerdido: CrearObjetoPerdido;
 
   constructor(
     listarObjetosPerdidos: ListarObjetosPerdidos,
     obtenerObjetoPerdido: ObtenerObjetoPerdido,
+    crearObjetoPerdido: CrearObjetoPerdido,
+
     ) {
     this.listarObjetosPerdidos = listarObjetosPerdidos;
     this.obtenerObjetoPerdido = obtenerObjetoPerdido;
+    this.crearObjetoPerdido = crearObjetoPerdido;
+
 
   }
 
@@ -53,5 +63,25 @@ export class ObjetosPerdidosController {
     }
 
     response.status(200).json({ data: objeto });
+  }
+
+  async crear(request: Request, response: Response): Promise<void> {
+    try {
+      const datos = request.body as DatosCrearObjetoPerdido;
+      const objeto = await this.crearObjetoPerdido.execute(datos);
+
+      response.status(201).json({ data: objeto });
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        response.status(error.statusCode).json({
+          error: error.message,
+        });
+        return;
+      }
+
+      response.status(500).json({
+        error: 'Error interno del servidor',
+      });
+    }
   }
 }
