@@ -46,5 +46,12 @@ export class PrismaObjetosPerdidosRepository
             });
             return zona !== null;
         }
+        async existeDia(id:number): Promise<boolean> {
+            const dia = await prisma.dias.findUnique({
+                where: {id},
+                select: {id:true},
+            });
+            return dia !== null;
+        }
         
 }
