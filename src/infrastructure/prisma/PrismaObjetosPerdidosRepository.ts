@@ -39,7 +39,7 @@ export class PrismaObjetosPerdidosRepository
                 };
             }
             
-        async existeZone(id:number): Promise<boolean> {
+        async existeZona(id:number): Promise<boolean> {
             const zona = await prisma.zonas.findUnique({
                 where: {id},
                 select: {id:true},
@@ -171,7 +171,33 @@ export class PrismaObjetosPerdidosRepository
                 updated_at: row.updated_at,
             };
             }
-                        
-            
-        
+            async borrarLogicamente(id: number, ): Promise<ObjetoPerdido | null> {
+                const existente = await this.obtenerPorId(id);
+
+                if (existente === null) {
+                    return null;
+                }
+
+                const row = await prisma.objetos_perdidos.update({
+                    where: { id },
+                    data: {
+                    state: 'REMOVED',
+                    },
+                });
+
+                return {
+                    id: row.id,
+                    descripcion: row.descripcion,
+                    categoria: row.categoria as ObjetoPerdido['categoria'],
+                    zona_id: row.zona_id,
+                    dia_id: row.dia_id,
+                    voluntario_id: row.voluntario_id,
+                    estado: row.estado as ObjetoPerdido['estado'],
+                    reclamado_por_asistente_id: row.reclamado_por_asistente_id,
+                    fecha_entrega: row.fecha_entrega,
+                    state: row.state as ObjetoPerdido['state'],
+                    created_at: row.created_at,
+                    updated_at: row.updated_at,
+                };
+                }
 }
