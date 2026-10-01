@@ -29,6 +29,7 @@ export interface DatosActualizarObjetoPerdido {
 
 // interfaz del repo
 export interface IObjetosPerdidosRepository {
+    
   listar(
     filtros: FiltrosObjetosPerdidos,
   ): Promise<{
@@ -54,4 +55,10 @@ export interface IObjetosPerdidosRepository {
   existeVoluntario(id: number): Promise<boolean>;
 
   obtenerDocumentoAsistente(id: number): Promise<string | null>;
-} 
+
+  reclamar(
+    id: number,
+    asistenteId: number,
+    fechaEntrega: Date,
+  ): Promise<ObjetoPerdido | null>;
+}
